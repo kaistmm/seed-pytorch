@@ -1,0 +1,18 @@
+model: ResNetSE34V2
+log_input: True
+encoder_type: ASP
+trainfunc: softmaxproto
+batch_size : 800
+nPerSpeaker: 1
+
+nPerSpeaker: 1
+nOut: 512
+n_mels: 64
+
+ptimizer : adamW
+
+pretrained_backbone_model: ./pretrained/official_resnetse34V2.model
+
+
+# Diffusion network parameters
+train_diffusion : False

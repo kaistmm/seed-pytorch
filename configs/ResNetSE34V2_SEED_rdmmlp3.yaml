@@ -1,0 +1,37 @@
+# Speaker extraction model parameters
+backbone: ResNetSE34V2
+log_input: True
+encoder_type: ASP
+batch_size : 300
+nPerSpeaker: 1
+
+nOut: 512
+n_mels: 64
+
+pretrained_backbone_model : ./pretrained/official_resnetse34V2.model
+
+train_list : ./datasets/manifests/libritts+light_1000h_v2.txt
+train_path : ./datasets/libritts+light_1000h
+test_path : ./datasets/voxceleb1_ext
+
+# Diffusion network parameters
+train_diffusion : True
+diffusion_network  : rdm_mlp
+diffusion_pipeline : ddpm
+diffusion_num_layers : 3
+
+# Diffusion parameters
+lr : 5e-4
+lr_decay : 1
+lr_decay_interval : 1
+optimizer : adamW
+
+train_timesteps  : 1000
+sample_timesteps : 50
+conditional_diffusion : False
+predict_type : sample
+self_cond    : True
+# training_clamp_norm : False
+# sampling_clamp_norm : False
+# sampling_final_norm : False
+normalize_type : l2

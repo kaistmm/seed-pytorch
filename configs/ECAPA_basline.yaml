@@ -1,0 +1,18 @@
+model: ECAPA_TDNN
+log_input: True
+trainfunc: softmaxproto
+batch_size : 800
+nPerSpeaker: 1
+C: 1024
+encoder_type: ECA
+nOut: 256
+n_mels: 80
+
+
+optimizer : adamW
+lr_decay_start : 0
+
+pretrained_backbone_model : ./pretrained/nkh_ecapatdnn_139epoch.model
+
+# Diffusion network parameters
+train_diffusion : False
