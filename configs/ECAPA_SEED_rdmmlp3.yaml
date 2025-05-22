@@ -10,7 +10,7 @@ encoder_type: ECA
 nOut: 256
 n_mels: 80
 
-pretrained_backbone_model : ./pretrained/nkh_ecapatdnn_139epoch.model
+pretrained_backbone_model : ./pretrained/official_ecapatdnn.model
 
 train_list : ./datasets/manifests/libritts+light_1000h_v2.txt
 train_path : ./datasets/libritts+light_1000h

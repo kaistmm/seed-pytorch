@@ -1,5 +1,5 @@
-**SEED: Speaker Embedding Enhancement Diffusion**
-* Accepted at Interspeech 2025 | Pytorch Implementation*
+# **SEED: Speaker Embedding Enhancement Diffusion**
+## * Accepted at Interspeech 2025 | Pytorch Implementation
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](#license) [![Python Version](https://img.shields.io/badge/python-3.8%2B-green)](#requirements) [![Coverage Status](https://img.shields.io/badge/coverage-99%25-brightgreen)](#)
 
@@ -40,6 +40,9 @@ We believe that the SEED framework can be applied to various representation mode
 * **OS**: Linux
 * **Python**: 3.8+
 * **System Tools**: `wget`, `ffmpeg`
+* **CUDA Toolkits**: 12.5.0 
+* **Pytorch**: 2.1.2
+> **Note**: In author's environment, we use `conda install nvidia/label/cuda-12.5.0::cuda-toolkit` (https://anaconda.org/nvidia/cuda-toolkit)
 
 Install Python dependencies:
 
@@ -198,7 +201,7 @@ For SEED, we provide the following pretrained models:
 
 ## 📜 License & Citation
 
-This project is licensed under the [MIT License](LICENSE).
+<!-- This project is licensed under the [MIT License](LICENSE).
 
 If you use SEED in your research, please cite:
 
@@ -209,6 +212,6 @@ If you use SEED in your research, please cite:
   booktitle={Interspeech},
   year={2025}
 }
-```
+``` -->
 
 ---
