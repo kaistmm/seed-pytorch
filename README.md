@@ -1,5 +1,5 @@
 # **SEED: Speaker Embedding Enhancement Diffusion**
-## * Accepted at Interspeech 2025 | Pytorch Implementation
+## Accepted at Interspeech 2025 | Pytorch Implementation
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](#license) [![Python Version](https://img.shields.io/badge/python-3.8%2B-green)](#requirements) [![Coverage Status](https://img.shields.io/badge/coverage-99%25-brightgreen)](#)
 
