@@ -12,13 +12,13 @@
 We believe that the SEED framework can be applied to various representation models (e.g., for Speech Recognition, Speech Emotion Recognition, Face Recognition, etc.), not just for speaker recognition tasks.
 
 <p align="center">
-  <img src="docs/main_figure.png" alt="SEED framework" width="600" />
+  <img src="docs/main_figure.png" alt="SEED framework" />
 </p>
 
 ### ✨ Key Features
 
-* **Backbone Agnostic**: Supports ResNetSE34V2, ECAPA-TDNN, and WavLM-LightECAPA.
-* **No Speaker Labels Required**: Can be trained on any clean speech data without explicit labels.
+* **Lightweight and Simple**: Easily applied to all speaker representation models, including ResNetSE34V2, ECAPA-TDNN, and WavLM-ECAPA, etc.
+* * **No Speaker Labels Required**: Can be trained on any clean speech data without explicit labels.
 
 ---
 
@@ -128,13 +128,24 @@ python main.py \
 ### Diffusion & Backbone Combined
 
 ```bash
+# ResNetSE34V2
 python main.py \
   --eval \
   --config configs/ResNetSE34V2_SEED_rdmmlp3.yaml \
   --pretrained_backbone_model pretrained/official_resnetse34V2.model \
-  --pretrained_diffusion_model exps/.../model00000xxx.model \
-  --test_path datasets/voxceleb1 \
-  --test_list datasets/manifests/vox1-O.txt \
+  --pretrained_diffusion_model pretrained/resnet34V2_SEED_evalseed_2690.model \
+  --seed 2690
+  --train_diffusion True
+```
+
+```bash
+# ECAPA-TDNN
+python main.py \
+  --eval \
+  --config configs/ECAPA_SEED_rdmmlp3.yaml \
+  --pretrained_backbone_model pretrained/official_ecapatdnn.model \
+  --pretrained_diffusion_model pretrained/ecapa_SEED_evalseed_898.model \
+  --seed 898
   --train_diffusion True
 ```
 
@@ -154,8 +165,6 @@ python main.py \
 
 ## 📝 Configuration Reference
 
-All hyperparameters can be overridden via CLI. Priority: CLI > YAML config.
-
 ```yaml
 # Speaker Backbone
 model: ResNetSE34V2
@@ -166,7 +175,7 @@ pretrained_speaker_model: ./pretrained/official_resnetse34V2.model
 # Diffusion
 train_diffusion: True
 diffusion_network: rdm_mlp
-num_layers: 3
+diffusion_num_layers: 3
 train_timesteps: 1000
 sample_timesteps: 50
 self_cond: True
@@ -190,12 +199,13 @@ optimizer: adamW
 
 ## 📂 Pretrained Models
 
-> Official checkpoints are hosted under `pretrained/`.
+> Official checkpoints can be downloaded under `pretrained/`.
 
 For SEED, we provide the following pretrained models:
 * **ResNetSE34V2** (backbone): `official_resnetse34V2.model`
+* **-->**          (SEED-Diffusion): `resnet34V2_SEED_evalseed_2690.model`
 * **ECAPA-TDNN**   (backbone): `official_ecapa_tdnn.model`
-* **Diffusion** (SEED): see `exps/` for trained models
+* **-->**          (SEED-Diffusion): `ecapa_SEED_evalseed_898.model`
 
 ---
 
