@@ -25,7 +25,7 @@ We believe that the SEED framework can be applied to various representation mode
 ### ✨ Key Features
 
 * **Lightweight and Simple**: Easily applied to all speaker representation models, including ResNetSE34V2, ECAPA-TDNN, and WavLM-ECAPA, etc.
-* * **No Speaker Labels Required**: Can be trained on any clean speech data without explicit labels.
+* **No Speaker Labels Required**: Can be trained on any clean speech data without explicit labels.
 
 ---
 
