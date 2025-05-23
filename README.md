@@ -99,7 +99,7 @@ datasets/
 
 ## 🏋️ Training
 
-### ResNetSE34V2 + SEED
+### ResNetSE34V2 (freezed) -> speaker embedding -> SEED (trainable)
 
 ```bash
 python main.py \
@@ -113,7 +113,7 @@ python main.py \
 * **Loss**: L1
 * **Self-Conditioning**: Enabled
 
-### ECAPA-TDNN + SEED
+### ECAPA-TDNN (freezed) -> speaker embedding -> SEED (trainable)
 
 ```bash
 python main.py \
