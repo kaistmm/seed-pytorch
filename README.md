@@ -1,13 +1,6 @@
 # **SEED: Speaker Embedding Enhancement Diffusion**
 ## Accepted at Interspeech 2025 | Pytorch Implementation
 
-### (Announcement-2025/05/23)
-
-*READ THIS PLEASE!!*
-
-We not complete this repository. We will upload dataset generation code and other details soon.
-
-
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](#license) [![Python Version](https://img.shields.io/badge/python-3.8%2B-green)](#requirements) [![Coverage Status](https://img.shields.io/badge/coverage-99%25-brightgreen)](#)
 
 ---
@@ -62,14 +55,18 @@ sudo apt-get install wget ffmpeg
 
 ## Datasets
 
-### Training Dataset
+### Prepare SEED Training and Evaluation Datasets
+
+First, please read [datasets/README.md](datasets/README.md) for more details.
+You can make all datasets by following the instruction in [datasets/README.md](datasets/README.md).
+
+### Training Dataset Summary
 
 SEED is trained on the following clean speech datasets and audio-augmentation datasets:
 
 * **LibriTTS-R**  (`train-clean-100` + `train-clean-360`, \~460h)
 * **Libri-Light** (`small`, \~577h)
 > **Note**: SEED does *not* require speaker labels. Provide a manifest file listing `<dummy_speaker_id> <file_path>` per line.
-> **TODO**: The code for generating training dataset of SEED will be released soon.
 
 * **MUSAN** (Music, Speech, and Noise)
 * **RIRs**  (Room Impulse Responses)
@@ -77,23 +74,25 @@ SEED is trained on the following clean speech datasets and audio-augmentation da
 
 ```text
 # Example: For libritts + librilight (1,000h), we make a manifest file like this:
-lt103  ./datasets/train_speech_1000h/lt103/1241/103_1241_000071_000000.wav
-lt1040 ./datasets/train_speech_1000h/lt1040/133433/1040_133433_000157_000000.wav
---> `lt103` and `lt1040` are dummpy pseudo-speaker labels, but we don't need any speaker labels to our SEED framework.
+train_libritts+librilight_1000h.txt
+/path/to/libritts-R_16k/1241/103_1241_000071_000000.wav
+/path/to/libritts-R_16k/1241/1040_133433_000157_000000.wav
 ```
 
-### Evaluation Dataset
+### Evaluation Dataset Summary
 
 * **VoxCeleb1 (For validation of training results)**
 * *VC-Mix* & *VoxSRC23* for environmental robustness benchmarks 
->  **(TODO)**: The code for generating VC-Mix dataset and manifest file will be released soon.
 
 
 Manifests are located under `datasets/manifests/`:
-
-* `datasets/manifests/vox1-O.txt`
-* `datasets/manifests/vcmix_test.txt`
-* `datasets/manifests/voxsrc23_test.txt`
+```bash
+datasets/
+├── manifests/
+│   ├── train_libritts+light_1000h.txt
+│   ├── vox1-O.txt
+│   ├── vcmix_test.txt
+```
 
 ---
 

@@ -1,6 +1,6 @@
-
 import torch
 import torch.nn.functional as F
+
 class PreEmphasis(torch.nn.Module):
 
     def __init__(self, coef: float = 0.97):

@@ -79,7 +79,7 @@ class AugmentWAV(object):
 
         clean_db = 10 * numpy.log10(numpy.mean(audio ** 2) + 1e-4)
 
-        numnoise = self.numnoise[noisecat]
+        numnoise  = self.numnoise[noisecat]
         noiselist = random.sample(self.noiselist[noisecat], random.randint(numnoise[0], numnoise[1]))
 
         noises = []
@@ -122,22 +122,23 @@ class train_dataset_loader(Dataset):
         random.shuffle(lines)
 
         # Make a dictionary of ID names and ID indices
-        dictkeys = list(set([x.split()[0] for x in lines]))
-        dictkeys.sort()
-        dictkeys = { key : ii for ii, key in enumerate(dictkeys) }
+        # dictkeys = list(set([x.split()[0] for x in lines]))
+        # dictkeys.sort()
+        # dictkeys = { key : ii for ii, key in enumerate(dictkeys) }
 
         # Parse the training list into file names and ID indices
         self.data_list  = []
         
         for lidx, line in enumerate(lines):
-            data = line.strip().split();
-            dummy_speaker_id, file_path = data[0], data[1]
+            file_path = line.strip();
 
             filename = os.path.join(train_path, file_path) if self.train_path is not None else file_path 
+
             """ Data file list policy:
             -> self.train_path is main dataset directory path. If your file_path is absolute path for audio date, you should set self.train_path = None.
             # E.g., file_path = 'rel_path/to/audio_file.wav', train_path = 'abs_path/to/dataset/' --> filename = train_path + file_path = 'abs_path/to/dataset/rel_path/to/audio_file.wav'
             # E.g., file_path = 'abs_path/to/audio_file.wav', train_path = None (must be None)    --> filename = file_path = 'abs_path/to/audio_file.wav'
+            -> Default: file_path of train_list is absolute path for audio file.
             """
 
             self.data_list.append(filename)

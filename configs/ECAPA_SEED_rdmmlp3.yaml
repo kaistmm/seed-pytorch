@@ -12,9 +12,11 @@ n_mels: 80
 
 pretrained_backbone_model : ./pretrained/official_ecapatdnn.model
 
-train_list : ./datasets/manifests/libritts+light_1000h_v2.txt
-train_path : ./datasets/libritts+light_1000h
-test_path  : ./datasets/voxceleb1_ext
+train_list :      ./datasets/manifests/train_libritts+light_1000h.txt # we use absolute path for datafile in train_list
+test_list  :      ./datasets/manifests/vox1-O.txt                # we use relative path for datafile in test_list
+extra_test_list : ./datasets/manifests/vcmix_test.txt            # we use relative path for datafile in extra_test_list
+train_path : null
+test_path  :      ./datasets/vox1-evals
 
 # Diffusion network parameters
 train_diffusion : True
