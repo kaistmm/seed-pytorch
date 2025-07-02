@@ -24,19 +24,19 @@ We believe that the SEED framework can be applied to various representation mode
 
 ## 📦 Contents
 
-1. [Requirements](#requirements)
-2. [Datasets](#datasets)
-3. [Training](#training)
-4. [Evaluation](#evaluation)
-5. [Configuration Reference](#configuration-reference)
-6. [Extending SEED](#extending-seed)
-7. [Pretrained Models](#pretrained-models)
-8. [Utilities & Troubleshooting](#utilities--troubleshooting)
-9. [License & Citation](#license--citation)
+1. [Requirements](#-requirements)
+2. [Datasets](#-datasets)
+3. [Training](#-training)
+4. [Evaluation](#-evaluation)
+5. [Configuration Reference](#-configuration-reference)
+6. [Extending SEED](#-extending-seed)
+7. [Pretrained Models](#-pretrained-models)
+8. [Utilities & Troubleshooting](#-utilities--troubleshooting)
+9. [License & Citation](#-license--citation)
 
 ---
 
-## Requirements
+## 📋 Requirements
 
 * **OS**: Linux
 * **Python**: 3.8+
@@ -54,7 +54,7 @@ sudo apt-get install wget ffmpeg
 
 ---
 
-## Datasets
+## 📊 Datasets
 
 ### Prepare SEED Training and Evaluation Datasets
 
@@ -100,6 +100,8 @@ datasets/
 
 ## 🏋️ Training
 
+> **Note on using your own pretrained models:** If you are using your own pretrained backbone and encounter key mismatch errors due to prefixes from a previous training environment (e.g., `module.` or `your_previous_classname.`), please refer to the [Utilities & Troubleshooting](#-utilities--troubleshooting) section. There, you can find simple instructions on how to resolve key name inconsistencies in your weights by removing the prefix.
+
 ### ResNetSE34V2 (freezed) -> speaker embedding -> SEED (trainable)
 
 ```bash
@@ -131,7 +133,9 @@ python main.py \
 #### 🔧 Troubleshooting
 **Key Mismatch Errors with Your Own Backbone?**
 >
-If you're using your own pretrained model and encounter errors about mismatched keys, it's likely due to a `state_dict` prefix issue (e.g., `module.` or `your_previous_classname.`) from a different training setup. Head over to our [**Utilities & Troubleshooting**](#utilities--troubleshooting) guide to resolve this in just a few steps.
+If you're using your own pretrained model and encounter errors about mismatched keys, it's likely due to a `state_dict` prefix issue (e.g., `module.` or `your_previous_classname.`) from a different training setup.
+>
+Don't worry, we have an easy fix! Head over to our [**Utilities & Troubleshooting**](#-utilities--troubleshooting) guide to resolve this in just a few steps.
 
 ---
 
@@ -175,7 +179,7 @@ python main.py \
 
 ---
 
-## 📝 Configuration Reference
+## ⚙️ Configuration Reference
 
 ```yaml
 # Speaker Backbone
