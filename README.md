@@ -100,8 +100,6 @@ datasets/
 
 ## 🏋️ Training
 
-> **Note on using your own pretrained models:** If you are using your own pretrained backbone and encounter key mismatch errors due to prefixes from a previous training environment (e.g., `module.` or `your_previous_classname.`), please refer to the [Utilities & Troubleshooting](#-utilities--troubleshooting) section. There, you can find simple instructions on how to resolve key name inconsistencies in your weights by removing the prefix.
-
 ### ResNetSE34V2 (freezed) -> speaker embedding -> SEED (trainable)
 
 ```bash
