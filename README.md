@@ -32,7 +32,7 @@ We believe that the SEED framework can be applied to various representation mode
 6. [Extending SEED](#️-extending-seed-to-your-own-representation-model)
 7. [Pretrained Models](#-pretrained-models)
 8. [Utilities & Troubleshooting](#-utilities--troubleshooting)
-9. [License & Citation](#-license--citation)
+9. [Citation](#-citation)
 
 ---
 
@@ -306,19 +306,17 @@ Using this tool, you can easily modify model checkpoints trained in various envi
 
 ---
 
-## 📜 License & Citation
-
-<!-- This project is licensed under the [MIT License](LICENSE).
+## 📜 Citation
 
 If you use SEED in your research, please cite:
 
 ```bibtex
-@inproceedings{lee2025seed,
-  title={Speaker Embedding Enhancement Diffusion},
-  author={Lee, First and Colleague, Second and ...},
-  booktitle={Interspeech},
+@article{nam2025seed,
+  title={SEED: Speaker Embedding Enhancement Diffusion Model},
+  author={Nam, KiHyun and Heo, Jungwoo and Jung, Jee-weon and Park, Gangin and Jung, Chaeyoung and Yu, Ha-Jin and Chung, Joon Son},
+  journal={arXiv preprint arXiv:2505.16798},
   year={2025}
 }
-``` -->
+```
 
 ---
