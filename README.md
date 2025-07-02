@@ -230,13 +230,21 @@ For SEED, we provide the following pretrained models:
 
 ### Easily Handle Your Own Backbone Weights
 
-Bringing your own pretrained backbone model into a new framework can often be a hassle due to annoying prefix mismatches in the model's `state_dict`. For example, weights trained with `DistributedDataParallel` (DDP) might have a `module.` prefix, or you might have a `your_previous_classname.` prefix from a different training setup.
+In SEED, we officially load backbone weights into `self.backbone`. However, when using your own pretrained models, you often encounter loading conflicts due to mismatched keys in the `state_dict`.
 
-`model_params_tool.py` is designed to make this process fast and easy. With this tool, you can quickly diagnose and fix prefix issues, allowing you to seamlessly integrate and test your own backbone weights with SEED.
+**Common Problem:**
+- Your model has keys like `module.layer1.conv.weight` (from DDP training)
+- Or keys like `your_previous_classname.conv2d.layer1.weight` (from different class structure)
+- But SEED expects keys like `layer1.conv.weight` to load into `self.backbone`
+
+**Result:** `RuntimeError: Error loading state_dict` due to key mismatches.
+
+**Our Solution:**
+We provide a simple utility code `model_params_tool.py` to easily modify the key values of neural network model weight files. This tool automatically detects and removes problematic prefixes, allowing you to seamlessly integrate your backbone weights with SEED.
 
 #### 1. Analyzing Model Prefixes (`analyze_prefix`)
 
-Before modifying a model, it's a good practice to first analyze the structure of its `state_dict` keys using the `analyze_prefix` command.
+First, analyze your model's `state_dict` structure:
 
 ```bash
 python model_params_tool.py analyze_prefix --model_path path/to/your/model.model
@@ -258,11 +266,8 @@ Sample Keys (first 10):
 ...
 --- End of Analysis ---
 ```
-This analysis helps you understand the cause of the problem by showing whether a `module.` prefix exists, what the most common prefix is, and whether the keys are consistent.
 
 **Example Output (When a prefix mismatch occurs):**
-Let's say you want to load a backbone model, but it fails with a key mismatch error. Analyzing the model might give you this:
-
 ```text
 --- Prefix Analysis Results ---
 Model Path: path/to/your/problematic_model.ckpt
@@ -278,16 +283,10 @@ Sample Keys (first 10):
 ...
 --- End of Analysis ---
 ```
-This output tells you that all keys have an unnecessary `your_previous_classname.` prefix. To fix this, you can remove it using the `remove_prefix` command described below.
 
 #### 2. Removing Model Prefixes (`remove_prefix`)
 
-To remove unnecessary prefixes from the `state_dict` keys, use the `remove_prefix` command. This command automatically detects and removes the `module.` prefix and can also remove a specific prefix designated by the `--target_prefix` argument.
-
-**Usage:**
-
-- **Remove a specific prefix (e.g., `your_previous_classname.`) and save to a new file:**
-  In the case of our example above, you would run the following command to fix it:
+**Remove a specific prefix:**
 ```bash
 python model_params_tool.py remove_prefix \
   --model_path path/to/your/problematic_model.ckpt \
