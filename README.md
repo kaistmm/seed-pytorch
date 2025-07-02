@@ -128,7 +128,10 @@ python main.py \
 * `--distributed` for DDP (set like `CUDA_VISIBLE_DEVICES=0,1,2,3`). 
 > **Note**: In this paper, we didn't use `--mixedprec` and `--distributed` options.
 
-> **Note on using your own pretrained models:** If you are using your own pretrained backbone and encounter key mismatch errors due to prefixes from a other training environment (e.g., `module.` or `your_previous_classname.`), please refer to the [Utilities & Troubleshooting](#utilities--troubleshooting) section. There, you can find simple instructions on how to resolve key name inconsistencies in your weights by removing the prefix.
+#### 🔧 Troubleshooting
+**Key Mismatch Errors with Your Own Backbone?**
+>
+If you're using your own pretrained model and encounter errors about mismatched keys, it's likely due to a `state_dict` prefix issue (e.g., `module.` or `your_previous_classname.`) from a different training setup. Head over to our [**Utilities & Troubleshooting**](#utilities--troubleshooting) guide to resolve this in just a few steps.
 
 ---
 
