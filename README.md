@@ -26,10 +26,10 @@ We believe that the SEED framework can be applied to various representation mode
 
 1. [Requirements](#-requirements)
 2. [Datasets](#-datasets)
-3. [Training](#-training)
+3. [Training](#️-training)
 4. [Evaluation](#-evaluation)
-5. [Configuration Reference](#-configuration-reference)
-6. [Extending SEED](#-extending-seed-to-your-own-representation-model)
+5. [Configuration Reference](#️-configuration-reference)
+6. [Extending SEED](#️-extending-seed-to-your-own-representation-model)
 7. [Pretrained Models](#-pretrained-models)
 8. [Utilities & Troubleshooting](#-utilities--troubleshooting)
 9. [License & Citation](#-license--citation)
