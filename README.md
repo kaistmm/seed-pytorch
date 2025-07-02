@@ -26,10 +26,10 @@ We believe that the SEED framework can be applied to various representation mode
 
 1. [Requirements](#-requirements)
 2. [Datasets](#-datasets)
-3. [Training](#-training)
+3. [Training](#training)
 4. [Evaluation](#-evaluation)
-5. [Configuration Reference](#-configuration-reference)
-6. [Extending SEED](#-extending-seed-to-your-own-representation-model)
+5. [Configuration Reference](#configuration-reference)
+6. [Extending SEED](#extending-seed-to-your-own-representation-model)
 7. [Pretrained Models](#-pretrained-models)
 8. [Utilities & Troubleshooting](#-utilities--troubleshooting)
 9. [License & Citation](#-license--citation)
@@ -99,6 +99,8 @@ datasets/
 
 
 ## 🏋️ Training
+
+> **Note on using your own pretrained models:** If you are using your own pretrained backbone and encounter key mismatch errors due to prefixes from a previous training environment (e.g., `module.` or `your_previous_classname.`), please refer to the [Utilities & Troubleshooting](#-utilities--troubleshooting) section. There, you can find simple instructions on how to resolve key name inconsistencies in your weights by removing the prefix.
 
 ### ResNetSE34V2 (freezed) -> speaker embedding -> SEED (trainable)
 
