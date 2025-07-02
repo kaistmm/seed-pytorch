@@ -28,9 +28,9 @@ We believe that the SEED framework can be applied to various representation mode
 2. [Datasets](#datasets)
 3. [Training](#training)
 4. [Evaluation](#evaluation)
-5. [Pretrained Models](#pretrained-models)
-6. [Configuration Reference](#configuration-reference)
-7. [Extending SEED](#extending-seed)
+5. [Configuration Reference](#configuration-reference)
+6. [Extending SEED](#extending-seed)
+7. [Pretrained Models](#pretrained-models)
 8. [Utilities & Troubleshooting](#utilities--troubleshooting)
 9. [License & Citation](#license--citation)
 
@@ -128,6 +128,8 @@ python main.py \
 * `--distributed` for DDP (set like `CUDA_VISIBLE_DEVICES=0,1,2,3`). 
 > **Note**: In this paper, we didn't use `--mixedprec` and `--distributed` options.
 
+> **Note on using your own pretrained models:** If you are using your own pretrained backbone and encounter key mismatch errors due to prefixes from a other training environment (e.g., `module.` or `your_previous_classname.`), please refer to the [Utilities & Troubleshooting](#utilities--troubleshooting) section. There, you can find simple instructions on how to resolve key name inconsistencies in your weights by removing the prefix.
+
 ---
 
 ## 🧪 Evaluation
@@ -201,6 +203,19 @@ optimizer: adamW
 3. Prepare your own training datasets (with augmentation strategies) and evaluation datasets.
 4. Follow existing modules as templates.
 5. Run main.py!
+
+---
+
+
+## 📂 Pretrained Models
+
+> Official checkpoints can be downloaded under `pretrained/`.
+
+For SEED, we provide the following pretrained models:
+* **ResNetSE34V2** (backbone): `official_resnetse34V2.model`
+* **-->**          (SEED-Diffusion): `resnet34V2_SEED_evalseed_2690.model`
+* **ECAPA-TDNN**   (backbone): `official_ecapa_tdnn.model`
+* **-->**          (SEED-Diffusion): `ecapa_SEED_evalseed_898.model`
 
 ---
 
@@ -282,18 +297,6 @@ python model_params_tool.py remove_prefix \
 ```
 
 Using this tool, you can easily modify model checkpoints trained in various environments to fit your current project.
-
----
-
-## 📂 Pretrained Models
-
-> Official checkpoints can be downloaded under `pretrained/`.
-
-For SEED, we provide the following pretrained models:
-* **ResNetSE34V2** (backbone): `official_resnetse34V2.model`
-* **-->**          (SEED-Diffusion): `resnet34V2_SEED_evalseed_2690.model`
-* **ECAPA-TDNN**   (backbone): `official_ecapa_tdnn.model`
-* **-->**          (SEED-Diffusion): `ecapa_SEED_evalseed_898.model`
 
 ---
 
