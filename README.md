@@ -31,7 +31,8 @@ We believe that the SEED framework can be applied to various representation mode
 5. [Pretrained Models](#pretrained-models)
 6. [Configuration Reference](#configuration-reference)
 7. [Extending SEED](#extending-seed)
-8. [License & Citation](#license--citation)
+8. [Utilities & Troubleshooting](#utilities--troubleshooting)
+9. [License & Citation](#license--citation)
 
 ---
 
@@ -66,7 +67,7 @@ SEED is trained on the following clean speech datasets and audio-augmentation da
 
 * **LibriTTS-R**  (`train-clean-100` + `train-clean-360`, \~460h)
 * **Libri-Light** (`small`, \~577h)
-> **Note**: SEED does *not* require speaker labels. Provide a manifest file listing `<dummy_speaker_id> <file_path>` per line.
+> **Note**: SEED does *not* require speaker labels. Provide a manifest file listing `<file_path>` per line.
 
 * **MUSAN** (Music, Speech, and Noise)
 * **RIRs**  (Room Impulse Responses)
@@ -200,6 +201,87 @@ optimizer: adamW
 3. Prepare your own training datasets (with augmentation strategies) and evaluation datasets.
 4. Follow existing modules as templates.
 5. Run main.py!
+
+---
+
+## 🧰 Utilities & Troubleshooting
+
+### Easily Handle Your Own Backbone Weights
+
+Bringing your own pretrained backbone model into a new framework can often be a hassle due to annoying prefix mismatches in the model's `state_dict`. For example, weights trained with `DistributedDataParallel` (DDP) might have a `module.` prefix, or you might have a `your_previous_classname.` prefix from a different training setup.
+
+`model_params_tool.py` is designed to make this process fast and easy. With this tool, you can quickly diagnose and fix prefix issues, allowing you to seamlessly integrate and test your own backbone weights with SEED.
+
+#### 1. Analyzing Model Prefixes (`analyze_prefix`)
+
+Before modifying a model, it's a good practice to first analyze the structure of its `state_dict` keys using the `analyze_prefix` command.
+
+```bash
+python model_params_tool.py analyze_prefix --model_path path/to/your/model.model
+```
+
+**Example Output (Clean case):**
+```text
+--- Prefix Analysis Results ---
+Model Path: pretrained/official_resnetse34V2.model
+Total Keys: 245
+Has 'module.' Prefix: False
+Most Common Prefix Found: N/A
+Expected Prefix for Check: Not specified
+Prefix Consistency: True
+Sample Keys (first 10):
+  - layer1.0.conv1.weight
+  - layer1.0.bn1.weight
+  - layer1.0.bn1.bias
+...
+--- End of Analysis ---
+```
+This analysis helps you understand the cause of the problem by showing whether a `module.` prefix exists, what the most common prefix is, and whether the keys are consistent.
+
+**Example Output (When a prefix mismatch occurs):**
+Let's say you want to load a backbone model, but it fails with a key mismatch error. Analyzing the model might give you this:
+
+```text
+--- Prefix Analysis Results ---
+Model Path: path/to/your/problematic_model.ckpt
+Total Keys: 245
+Has 'module.' Prefix: False
+Most Common Prefix Found: your_previous_classname.
+Expected Prefix for Check: Not specified
+Prefix Consistency: True
+Sample Keys (first 10):
+  - your_previous_classname.layer1.0.conv1.weight
+  - your_previous_classname.layer1.0.bn1.weight
+  - your_previous_classname.layer1.0.bn1.bias
+...
+--- End of Analysis ---
+```
+This output tells you that all keys have an unnecessary `your_previous_classname.` prefix. To fix this, you can remove it using the `remove_prefix` command described below.
+
+#### 2. Removing Model Prefixes (`remove_prefix`)
+
+To remove unnecessary prefixes from the `state_dict` keys, use the `remove_prefix` command. This command automatically detects and removes the `module.` prefix and can also remove a specific prefix designated by the `--target_prefix` argument.
+
+**Usage:**
+
+- **Remove a specific prefix (e.g., `your_previous_classname.`) and save to a new file:**
+  In the case of our example above, you would run the following command to fix it:
+```bash
+python model_params_tool.py remove_prefix \
+  --model_path path/to/your/problematic_model.ckpt \
+  --output_path path/to/your/refined_model.ckpt \
+  --target_prefix "your_previous_classname."
+```
+
+- **Overwrite the original file:**
+If you don't specify an `--output_path`, the changes will overwrite the original model file.
+```bash
+python model_params_tool.py remove_prefix \
+  --model_path path/to/your/original_model.ckpt \
+  --target_prefix "unwanted_prefix."
+```
+
+Using this tool, you can easily modify model checkpoints trained in various environments to fit your current project.
 
 ---
 

@@ -394,9 +394,9 @@ def main():
        python model_params_tool.py remove_prefix --model_path path/to/your/model.ckpt --target_prefix "unwanted_prefix."
 
     2. Analyze prefixes of a model:
-       python model_params_tool.py analyze_prefixes --model_path path/to/your/model.ckpt
+       python model_params_tool.py analyze_prefix --model_path path/to/your/model.ckpt
        # With an expected prefix:
-       python model_params_tool.py analyze_prefixes --model_path path/to/your/model.ckpt --expected_prefix "expected_prefix."
+       python model_params_tool.py analyze_prefix --model_path path/to/your/model.ckpt --expected_prefix "expected_prefix."
     """
     parser     = argparse.ArgumentParser(description='Pytorch model parameters utility functions for prefix handling.')
     subparsers = parser.add_subparsers(dest='command', help='Command to execute', required=True)
@@ -411,7 +411,7 @@ def main():
                               help='Specific prefix to remove (e.g., "backbone."). This is in addition to "module." which is always checked.')
     
     # Analyze model prefixes command (analyze_model_prefixes)
-    analyze_parser = subparsers.add_parser('analyze_prefixes', help='Analyze the prefix structure of a model.')
+    analyze_parser = subparsers.add_parser('analyze_prefix', help='Analyze the prefix structure of a model.')
     analyze_parser.add_argument('--model_path', type=str, required=True,
                                help='Path to the model file to analyze.')
     analyze_parser.add_argument('--expected_prefix', type=str, default=None,
@@ -432,7 +432,7 @@ def main():
         else:
             print("Prefix removal failed or state_dict was empty.")
             
-    elif args.command == 'analyze_prefixes':
+    elif args.command == 'analyze_prefix':
         print(f"Analyzing prefixes for model: {args.model_path}")
         if args.expected_prefix:
             print(f"Expecting prefix: {args.expected_prefix}")
