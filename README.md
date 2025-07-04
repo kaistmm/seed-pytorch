@@ -119,13 +119,27 @@ python main.py \
 ```bash
 python main.py \
   --config configs/ECAPA_TDNN_SEED.yaml \
-  --save_path exps/ecapa_tdnn_SEED
+  --save_path exps/ecapa_tdnn_SEED \
+  --wandb \
+  --project "SEED" \
+  --entity "your_wandb_entity" \
+  --group "experiments" \
+  --name "ecapa_seed_baseline"
 ```
 
 #### Tips
 
 * `--mixedprec` for mixed-precision for fp16 training (To fast training).
 * `--distributed` for DDP (set like `CUDA_VISIBLE_DEVICES=0,1,2,3`). 
+* `--wandb` for experiment logging with Weights & Biases. It is Optional. Configure with `--project`, `--entity`, `--group`, and `--name` parameters.
+  ```bash
+  python main.py \
+    --wandb \                       # Enable wandb logging (optional)
+    --project "SEED" \              # Wandb project name
+    --entity "your_wandb_entity" \  # Your wandb username or team name
+    --group "experiments" \         # Group related experiments together
+    --name "ecapa_seed_baseline"    # Specific experiment name
+  ```
 > **Note**: In this paper, we didn't use `--mixedprec` and `--distributed` options.
 
 #### 🔧 Troubleshooting
@@ -234,8 +248,6 @@ In SEED, we officially load backbone weights into `self.backbone`. However, when
 - Your model has keys like `module.layer1.conv.weight` (from DDP training)
 - Or keys like `your_previous_classname.conv2d.layer1.weight` (from different class structure)
 - But SEED expects keys like `layer1.conv.weight` to load into `self.backbone`
-
-**Result:** `RuntimeError: Error loading state_dict` due to key mismatches.
 
 **Our Solution:**
 We provide a simple utility code `model_params_tool.py` to easily modify the key values of neural network model weight files. This tool automatically detects and removes problematic prefixes, allowing you to seamlessly integrate your backbone weights with SEED.

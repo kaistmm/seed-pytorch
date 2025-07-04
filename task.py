@@ -193,11 +193,12 @@ class ModelTrainer(object):
                 args.global_step += 1
                 lr = self.__optimizer__.param_groups[0]["lr"]
 
-                logger.log({
-                    "DM loss_step": loss / counter,
-                    "grad_norm": grad_norm,
-                    "lr": lr,
-                })
+                if logger is not None:
+                    logger.log({
+                        "DM loss_step": loss / counter,
+                        "grad_norm": grad_norm,
+                        "lr": lr,
+                    })
 
                 sys.stdout.write("\rProcessing {:d} of {:d}:".format(index, loader.__len__() * loader.batch_size))
                 sys.stdout.write("LossDM {:.2f} LR {:.6f} - {:.2f} Hz ".format(lossDM / counter, lr, stepsize / telapsed))

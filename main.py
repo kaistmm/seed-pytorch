@@ -8,6 +8,8 @@ import zipfile
 import warnings
 import datetime
 import wandb
+import random
+import numpy as np
 
 import torch
 
@@ -43,13 +45,15 @@ parser.add_argument('--entity',             default='seed_guys',            help
 parser.add_argument('--group',              default='seed_tuning',          help='Wandb group name.')
 parser.add_argument('--name',               default='baseline',             help='Experiment name.')
 parser.add_argument('--description',        default='')
+parser.add_argument('--wandb',              action='store_true',            help='Enable wandb logging')
+
 
 ## Training details
 parser.add_argument('--test_interval',      type=int,   default=1,      help='Test and save every [test_interval] epochs')
 parser.add_argument('--max_epoch',          type=int,   default=300,    help='Maximum number of epochs')
 
 ## Optimizer
-parser.add_argument('--optimizer',          type=str,   default="adam",     help='sgd or adam')
+parser.add_argument('--optimizer',          type=str,   default="adam",     help='sgd or adam or adamw')
 parser.add_argument('--scheduler',          type=str,   default="steplr",   help='Learning rate scheduler')
 parser.add_argument('--lr',                 type=float, default=0.001,      help='Learning rate')
 parser.add_argument('--weight_decay',       type=float, default=5e-5,       help='Weight decay in the optimizer')
@@ -108,8 +112,8 @@ parser.add_argument('--save_path',                  type=str,   default="exps/ex
 parser.add_argument('--train_list',     type=str,   default="datasets/manifests/train_list.txt",    help='Train list.      Default path style is follow `voxceleb` style like `speaker_id/video_session/filename.wav`')
 parser.add_argument('--test_list',      type=str,   default="datasets/manifests/vox1-o.txt",        help='Evaluation list. Default path style is follow `voxceleb` style like `speaker_id/video_session/filename.wav`')
 parser.add_argument('--extra_test_list',type=str,   default="datasets/manifests/vcmix_test.txt",    help='Additional Evaluation list')
-parser.add_argument('--train_path',     type=str,   default=None,        help='Absolute path to the train set. Default is None. If is not None, dataloadet get data path with train_path + train_list path. e.g `train_path/ + file_path of `train_list`')
-parser.add_argument('--test_path',      type=str,   default=None,        help='Absolute path to the test set.  Default is None. If is not None, dataloadet get data path with test_path + test_list path.   e.g `test_path/ + file_path of `test_list`')
+parser.add_argument('--train_path',     type=str,   default=None,             help='Absolute path to the train set. Default is None. If is not None, dataloadet get data path with train_path + train_list path. e.g `train_path/ + file_path of `train_list`')
+parser.add_argument('--test_path',      type=str,   default=None,             help='Absolute path to the test set.  Default is None. If is not None, dataloadet get data path with test_path + test_list path.   e.g `test_path/ + file_path of `test_list`')
 parser.add_argument('--musan_path',     type=str,   default="datasets/musan",            help='Absolute path to the test set')
 parser.add_argument('--rir_path',       type=str,   default="datasets/simulated_rirs",   help='Absolute path to the test set')
 
@@ -183,7 +187,7 @@ def main_worker(gpu, ngpus_per_node, args):
         task = WrappedModel(task).cuda(args.gpu)
 
     # Initialize wandb
-    if args.gpu == 0:
+    if args.gpu == 0 and args.wandb:
         wandb.init(
             project=args.project,
             entity=args.entity,
@@ -227,7 +231,7 @@ def main_worker(gpu, ngpus_per_node, args):
             print("Diffusion normalize type:     ",  args.normalize_type)
             print("Diffusion sampling by DDIM:   ",  args.use_ddim)
             print("Diffusion feature ensemble:   ",  args.feature_ensemble)
-            print("Diffusion network ema: ",         args.ema)
+            print("Diffusion network ema value:  ",  args.ema)
 
         print("Activate Audio 8k augmentation:", args.augment_8k)
         print("Max Learning rate :",             args.lr)
@@ -274,11 +278,12 @@ def main_worker(gpu, ngpus_per_node, args):
 
             test_name = os.path.splitext(os.path.basename(args.test_list))[0]
 
-            wandb.log({
-                f"eval/EER_{test_name}": eer,
-                f"eval/MinDCF_{test_name}": mindcf,
-                "epoch": it
-            })
+            if args.wandb:
+                wandb.log({
+                    f"eval/EER_{test_name}": eer,
+                    f"eval/MinDCF_{test_name}": mindcf,
+                    "epoch": it
+                })
 
         return
 
@@ -302,7 +307,7 @@ def main_worker(gpu, ngpus_per_node, args):
     for it in range(it,args.max_epoch+1):
         lr_schedule = True if it+1 > args.lr_decay_start else False
             
-        loss, traineer = trainer.train_network(train_loader, verbose=(args.gpu == 0), args=args, lr_schedule=lr_schedule, logger=wandb if args.gpu == 0 else None)
+        loss, traineer = trainer.train_network(train_loader, verbose=(args.gpu == 0), args=args, lr_schedule=lr_schedule, logger=wandb if args.gpu == 0 and args.wandb else None)
         # Get learning rate directly from the first param group instead of iterating through all groups
         clr = trainer.__optimizer__.param_groups[0]['lr']
 
@@ -311,12 +316,13 @@ def main_worker(gpu, ngpus_per_node, args):
             scorefile.write("Epoch {:d}, TEER/TAcc {:2.2f}, TLOSS {:f}, LR {:f} \n".format(it, traineer, loss, clr))
             
             # Log training metrics to wandb
-            wandb.log({
-                "train/loss": loss,
-                "train/accuracy": traineer,
-                "train/learning_rate": clr,
-                "epoch": it
-            })
+            if args.wandb:
+                wandb.log({
+                    "train/loss": loss,
+                    "train/accuracy": traineer,
+                    "train/learning_rate": clr,
+                    "epoch": it
+                })
 
         if it % args.test_interval == 0:
             metrics = {}
@@ -338,8 +344,9 @@ def main_worker(gpu, ngpus_per_node, args):
 
             if args.gpu == 0:
                 # Log all test metrics to wandb at once
-                wandb_metrics["epoch"] = it
-                wandb.log(wandb_metrics)
+                if args.wandb:
+                    wandb_metrics["epoch"] = it
+                    wandb.log(wandb_metrics)
 
                 if args.train_diffusion:
                     trainer.save_parameters("diffusion_network", args.model_save_path+"/model%09d.model"%it)
@@ -360,7 +367,8 @@ def main_worker(gpu, ngpus_per_node, args):
     if args.gpu == 0:
         scorefile.close()
         # Finish wandb run
-        wandb.finish()
+        if args.wandb:
+            wandb.finish()
 
 ## ===== ===== ===== ===== ===== ===== ===== =====
 ## Main function
