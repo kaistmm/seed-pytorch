@@ -120,25 +120,20 @@ python main.py \
 python main.py \
   --config configs/ECAPA_TDNN_SEED.yaml \
   --save_path exps/ecapa_tdnn_SEED \
-  --wandb \
-  --project "SEED" \
-  --entity "your_wandb_entity" \
-  --group "experiments" \
-  --name "ecapa_seed_baseline"
+  --wandb     # Enable wandb logging (optional)
 ```
 
 #### Tips
 
 * `--mixedprec` for mixed-precision for fp16 training (To fast training).
 * `--distributed` for DDP (set like `CUDA_VISIBLE_DEVICES=0,1,2,3`). 
-* `--wandb` for experiment logging with Weights & Biases. It is Optional. Configure with `--project`, `--entity`, `--group`, and `--name` parameters.
+* `--wandb` for experiment logging with Weights & Biases. It is optional. Configure with `--project`, `--entity`, `--group`, and `--name` parameters.
   ```bash
-  python main.py \
-    --wandb \                       # Enable wandb logging (optional)
-    --project "SEED" \              # Wandb project name
-    --entity "your_wandb_entity" \  # Your wandb username or team name
-    --group "experiments" \         # Group related experiments together
-    --name "ecapa_seed_baseline"    # Specific experiment name
+  --wandb                        # Enable wandb logging (optional)
+  --project "SEED"               # Wandb project name
+  --entity "your_wandb_entity"   # Your wandb username or team name
+  --group "experiments"          # Group related experiments together
+  --name "ecapa_seed_baseline"   # Specific experiment name
   ```
 > **Note**: In this paper, we didn't use `--mixedprec` and `--distributed` options.
 
