@@ -14,6 +14,14 @@
 
 We believe that the SEED framework can be applied to various representation models (e.g., for Speech Recognition, Speech Emotion Recognition, Face Recognition, etc.), not just for speaker recognition tasks.
 
+<details>
+<summary><strong>📖 Abstract</strong></summary>
+<br>
+
+*A primary challenge when deploying speaker recognition systems in real-world applications is performance degradation caused by environmental mismatch. We propose a diffusion-based method that takes speaker embeddings extracted from a pre-trained speaker recognition model and generates refined embeddings. For training, our approach progressively adds Gaussian noise to both clean and noisy speaker embeddings extracted from clean and noisy speech, respectively, via forward process of a diffusion model, and then reconstructs them to clean embeddings in the reverse process. While inferencing, all embeddings are regenerated via diffusion process. Our method needs neither speaker label nor any modification to the existing speaker recognition pipeline. Experiments on evaluation sets simulating environment mismatch scenarios show that our method can improve recognition accuracy by up to 19.6% over baseline models while retaining performance on conventional scenarios. We publish our code in here*
+
+</details>
+
 <p align="center">
   <img src="docs/main_figure.png" alt="SEED framework" />
 </p>
