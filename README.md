@@ -31,6 +31,9 @@ We believe that the SEED framework can be applied to various representation mode
 * **Lightweight and Simple**: Easily applied to all speaker representation models, including ResNetSE34V2, ECAPA-TDNN, and WavLM-ECAPA, etc.
 * **No Speaker Labels Required**: Can be trained on any clean speech data without explicit labels.
 
+### 💙 Contributors
+* 👨‍💻 This repository has been thoughtfully developed and maintained by **KiHyun Nam**, **Jungwoo Heo**, and **Gangin Park**.
+* 💡 Inspired by the excellent [VoxCeleb trainer](https://github.com/clovaai/voxceleb_trainer) repository.
 ---
 
 ## 📦 Contents
