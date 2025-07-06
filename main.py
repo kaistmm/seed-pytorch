@@ -118,8 +118,8 @@ parser.add_argument('--musan_path',     type=str,   default="datasets/musan",   
 parser.add_argument('--rir_path',       type=str,   default="datasets/simulated_rirs",   help='Absolute path to the test set')
 
 ## Extract embedding vector (for inference)
-parser.add_argument('--extract_embedding_from_audio_path',     type=str, default="/path/to/your/audio_file_path",     help='Audio file path for inference')
-parser.add_argument('--extract_embedding_from_audio_filelist', type=str, default="/path/to/your/audio_file_list.txt", help='Audio file path list for inference')
+parser.add_argument('--extract_embedding_from_audio_path',     type=str, default=None,     help='Audio file path for inference.      "/path/to/your/audio_file_path.wav"')
+parser.add_argument('--extract_embedding_from_audio_filelist', type=str, default=None,     help='Audio file path list for inference. "/path/to/your/audio_file_list.txt"')
 
 ## Backbone Model parameters (For ECAPA-TDNN and Resnet34SEV2)
 parser.add_argument('--backbone',       type=str,   default="ECAPA_TDNN",     help='Name of model definition')
