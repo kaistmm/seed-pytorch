@@ -117,6 +117,10 @@ parser.add_argument('--test_path',      type=str,   default=None,             he
 parser.add_argument('--musan_path',     type=str,   default="datasets/musan",            help='Absolute path to the test set')
 parser.add_argument('--rir_path',       type=str,   default="datasets/simulated_rirs",   help='Absolute path to the test set')
 
+## Extract embedding vector (for inference)
+parser.add_argument('--extract_embedding_from_audio_path',     type=str, default="/path/to/your/audio_file_path",     help='Audio file path for inference')
+parser.add_argument('--extract_embedding_from_audio_filelist', type=str, default="/path/to/your/audio_file_list.txt", help='Audio file path list for inference')
+
 ## Backbone Model parameters (For ECAPA-TDNN and Resnet34SEV2)
 parser.add_argument('--backbone',       type=str,   default="ECAPA_TDNN",     help='Name of model definition')
 parser.add_argument('--n_mels',         type=int,   default=80,               help='Number of mel or mfcc filterbanks')
@@ -186,6 +190,8 @@ def main_worker(gpu, ngpus_per_node, args):
     else:
         task = WrappedModel(task).cuda(args.gpu)
 
+    trainer  = ModelTrainer(task, **vars(args))
+
     # Initialize wandb
     if args.gpu == 0 and args.wandb:
         wandb.init(
@@ -198,22 +204,6 @@ def main_worker(gpu, ngpus_per_node, args):
         # Log model architecture
         wandb.watch(task)
 
-    it = 1
-    eers = [100]
-
-    ## Initialise trainer and data loader
-    train_dataset = train_dataset_loader(**vars(args))
-
-    train_loader = torch.utils.data.DataLoader(
-        train_dataset,
-        batch_size=args.batch_size,
-        num_workers=args.nDataLoaderThread,
-        shuffle=True,
-        pin_memory=False,
-        worker_init_fn=worker_init_fn,
-        drop_last=True,
-    )
-    
     if args.gpu == 0:
         ## Write args to scorefile
         scorefile = open(args.result_save_path+"/scores.txt", "a+")
@@ -245,27 +235,32 @@ def main_worker(gpu, ngpus_per_node, args):
         print('Trainable parameters: ',f'{trainable_params/1000000:.2f}M (Diffusion network)')
         print('Frozen parameters:    ',f'{frozen_params/1000000:.2f}M')
 
-
-    trainer  = ModelTrainer(task, **vars(args))
-
-    ## Load model weights
-    modelfiles = glob.glob('%s/model0*.model'%args.model_save_path)
-    modelfiles.sort()
-
     # 1. Pretrained speaker model
-    it = 0
     if args.pretrained_backbone_model != "":
         trainer.load_parameters("backbone", args.pretrained_backbone_model)
-
     if args.pretrained_diffusion_model != "":
         trainer.load_parameters("diffusion_network", args.pretrained_diffusion_model)
-
     """ We didn't implement the continue training code. (TODO)"""
 
+    if args.extract_embedding_from_audio_filelist != "" or args.extract_embedding_from_audio_path != "":
+        trainer.extract_embedding(audio_file_list=args.extract_embedding_from_audio_filelist, 
+                                  audio_file_path=args.extract_embedding_from_audio_path, 
+                                  save_path=args.save_path)
+        return
 
-    if trainer.lr_step == 'epoch' and args.scheduler == 'steplr':
-        for ii in range(1,it):
-            trainer.__scheduler__.step()
+    ## Initialise data loader
+    train_dataset = train_dataset_loader(**vars(args))
+
+    train_loader = torch.utils.data.DataLoader(
+        train_dataset,
+        batch_size=args.batch_size,
+        num_workers=args.nDataLoaderThread,
+        shuffle=True,
+        pin_memory=False,
+        worker_init_fn=worker_init_fn,
+        drop_last=True,
+    )
+
 
     ## Evaluation code - must run on single GPU
     if args.eval == True :
@@ -300,11 +295,11 @@ def main_worker(gpu, ngpus_per_node, args):
         with open(args.result_save_path + '/run%s.cmd'%strtime, 'w') as f:
             f.write('%s'%args)
 
-
-    ## Core training script
+    it = 0
     test_lists = [args.test_list, args.extra_test_list] if args.extra_test_list else [args.test_list] # you can add more test lists (we recommend two eval sets for better checking)
+
     args.global_step = 0
-    for it in range(it,args.max_epoch+1):
+    for it in range(it, args.max_epoch+1):
         lr_schedule = True if it+1 > args.lr_decay_start else False
             
         loss, traineer = trainer.train_network(train_loader, verbose=(args.gpu == 0), args=args, lr_schedule=lr_schedule, logger=wandb if args.gpu == 0 and args.wandb else None)

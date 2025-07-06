@@ -12,6 +12,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import pandas as pd
+import soundfile
 
 from DatasetLoader import test_dataset_loader
 from torch.cuda.amp import autocast, GradScaler
@@ -353,6 +354,56 @@ class ModelTrainer(object):
     ## ===== ===== ===== ===== ===== ===== ===== =====
     ## Save parameters
     ## ===== ===== ===== ===== ===== ===== ===== =====
+
+    def extract_embedding(self, audio_file_list=None, audio_file_path=None, save_path=None, **kwargs):
+        """
+        Extract embedding from audio file list or audio file path.
+        Recommend: Audio file should be 16kHz mono audio coded in 16bit PCM.
+        
+        Args:
+            audio_file_list: list of audio file paths
+            audio_file_path: single audio file path
+            save_path: path to save the extracted embeddings
+        Returns:
+            None
+        """
+        print(f"We recommend to use 16kHz mono audio coded in 16bit PCM for inference. \n"
+              f"Because, these experiments are conducted on 16kHz mono audio coded in 16bit PCM datasets.\n"
+              f"If you want to convert your audio to 16kHz mono audio coded in 16bit PCM, you can use the following command:\n"
+              f"ffmpeg -i `input.wav` -ar 16000 -ac 1 -acodec pcm_s16le `output.wav`")
+        
+        if audio_file_list is not None:
+            with open(audio_file_list, 'r') as f:
+                audio_file_list = [line.strip() for line in f.readlines()]
+        elif audio_file_path is not None:
+            audio_file_list = [audio_file_path]
+        else:
+            raise ValueError("`audio_file_list` or `audio_file_path` must be provided")
+            
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        if save_path is not None and not os.path.exists(save_path):
+            os.makedirs(save_path, exist_ok=True)
+
+        for audio_file in tqdm(audio_file_list):
+            filename = os.path.splitext(os.path.basename(audio_file))[0]
+            audio, sample_rate = soundfile.read(audio_file)
+
+            audio = torch.FloatTensor(audio).to(device) # [seq_length] or [C, seq_length] for multi-channel audio
+
+            if audio.dim() == 1:
+                audio = audio.unsqueeze(0)              # [1, seq_length]
+            else:
+                audio = audio.mean(dim=0, keepdim=True) # [1, seq_length]
+
+            with torch.no_grad():
+                embedding = self.backbone(audio)
+
+            embedding = embedding.detach().cpu().numpy().squeeze() # [D]
+            if save_path is not None:
+                np.save(os.path.join(save_path, filename + ".npy"), embedding)
+                print(f"Output speaker embedding saved to {os.path.join(save_path, filename + '.npy')}")
+        return 
 
     def save_parameters(self, target_model:str, path:str):
         if target_model == "backbone":

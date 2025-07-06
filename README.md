@@ -198,6 +198,39 @@ python main.py \
   --train_diffusion False
 ```
 
+### Speaker Embedding Extraction
+
+You can extract speaker embeddings from your own audio files using the pretrained models. The system supports both single audio files and batch processing from file lists.
+
+#### Extract from a single audio file path
+
+```bash
+python main.py \
+  --config configs/ResNetSE34V2_SEED_rdmmlp3.yaml \
+  --pretrained_backbone_model pretrained/official_resnetse34V2.model \
+  --pretrained_diffusion_model pretrained/resnet34V2_SEED_evalseed_2690.model \
+  --seed 2690 \
+  --train_diffusion True \
+  --save_path path/to/save/embeddings \
+  --extract_embedding_from_audio_path my_audio_path.wav
+```
+
+#### Extract from multiple audio files
+
+```bash
+# Simply replace `--extract_embedding_from_audio_path with` --> `--extract_embedding_from_audio_filelist`
+# and provide a text file containing audio file paths (one path per line)
+```
+
+**Recommendation**: Use 16kHz mono audio coded in 16bit PCM for best results, as the models were trained on this format.
+
+**Convert your audio to the recommended format:**
+```bash
+ffmpeg -i `input.wav` -ar 16000 -ac 1 -acodec pcm_s16le `output.wav`
+```
+
+**Output**: Speaker embeddings are saved as `.npy` files in the specified directory. Each file contains a numpy array representing the extracted speaker embedding (shape==[D]).
+
 ---
 
 ## ⚙️ Configuration Reference
