@@ -355,7 +355,7 @@ class ModelTrainer(object):
     ## Save parameters
     ## ===== ===== ===== ===== ===== ===== ===== =====
 
-    def extract_embedding(self, audio_file_list=None, audio_file_path=None, save_path=None, **kwargs):
+    def extract_embedding(self, audio_file_list=None, audio_file_path=None, save_path=None, args=None, **kwargs):
         """
         Extract embedding from audio file list or audio file path.
         Recommend: Audio file should be 16kHz mono audio coded in 16bit PCM.
@@ -385,6 +385,12 @@ class ModelTrainer(object):
         if save_path is not None and not os.path.exists(save_path):
             os.makedirs(save_path, exist_ok=True)
 
+        # Check if EMA is available for diffusion
+        if self.ema is not None and args.train_diffusion:
+            self.ema.store(self.diffusion_network.parameters())
+            self.ema.copy_to(self.diffusion_network.parameters())
+            print("Using EMA parameters for diffusion network during embedding extraction.")
+
         for audio_file in tqdm(audio_file_list):
             filename = os.path.splitext(os.path.basename(audio_file))[0]
             audio, sample_rate = soundfile.read(audio_file)
@@ -397,12 +403,23 @@ class ModelTrainer(object):
                 audio = audio.mean(dim=0, keepdim=True) # [1, seq_length]
 
             with torch.no_grad():
-                embedding = self.backbone(audio)
+                embedding = self.backbone(audio)        # [1, D]
+                
+                # Apply Diffusion if used
+                if args.train_diffusion:
+                    enhanced_embedding = self.diffusion_pipeline.sample(x_start=embedding, args=args)
+                    embedding = embedding + enhanced_embedding if args.feature_ensemble else enhanced_embedding
 
             embedding = embedding.detach().cpu().numpy().squeeze() # [D]
             if save_path is not None:
                 np.save(os.path.join(save_path, filename + ".npy"), embedding)
                 print(f"Output speaker embedding saved to {os.path.join(save_path, filename + '.npy')}")
+        
+        # Restore original parameters if EMA was used
+        if self.ema is not None and args.train_diffusion:
+            self.ema.restore(self.diffusion_network.parameters())
+            print("Restored original parameters after embedding extraction.")
+        
         return 
 
     def save_parameters(self, target_model:str, path:str):
