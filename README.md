@@ -218,8 +218,9 @@ python main.py \
 #### Extract from multiple audio files
 
 ```bash
-# Simply replace `--extract_embedding_from_audio_path with` --> `--extract_embedding_from_audio_filelist`
-# and provide a text file containing audio file paths (one path per line)
+# Simply replace `--extract_embedding_from_audio_path`  
+# Use `--extract_embedding_from_audio_filelist`
+# And provide a text file containing audio file paths (one path per line)
 ```
 
 **Recommendation**: Use 16kHz mono audio coded in 16bit PCM for best results, as the models were trained on this format.
