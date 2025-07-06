@@ -212,15 +212,15 @@ python main.py \
   --seed 2690 \
   --train_diffusion True \
   --save_path path/to/save/embeddings \
-  --extract_embedding_from_audio_path my_audio_path.wav
+  --extract_embedding_from_audio_path `my_audio_path.wav`
 ```
 
 #### Extract from multiple audio files
 
 ```bash
 # Simply replace `--extract_embedding_from_audio_path`  
-# Use `--extract_embedding_from_audio_filelist`
-# And provide a text file containing audio file paths (one path per line)
+# Use `--extract_embedding_from_audio_filelist` with `my_audio_filelist.txt` 
+# And a text file containing audio file paths (one path per line)
 ```
 
 **Recommendation**: Use 16kHz mono audio coded in 16bit PCM for best results, as the models were trained on this format.
