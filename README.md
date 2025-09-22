@@ -364,11 +364,14 @@ Using this tool, you can easily modify model checkpoints trained in various envi
 If you use SEED in your research, please cite:
 
 ```bibtex
-@article{nam2025seed,
-  title={SEED: Speaker Embedding Enhancement Diffusion Model},
-  author={Nam, KiHyun and Heo, Jungwoo and Jung, Jee-weon and Park, Gangin and Jung, Chaeyoung and Yu, Ha-Jin and Chung, Joon Son},
-  journal={arXiv preprint arXiv:2505.16798},
-  year={2025}
+@inproceedings{nam25b_interspeech,
+  title     = {{SEED: Speaker Embedding Enhancement Diffusion Model}},
+  author    = {Kihyun Nam and Jungwoo Heo and Jee-weon Jung and Gangin Park and Chaeyoung Jung and Ha-Jin Yu and Joon Son Chung},
+  year      = {2025},
+  booktitle = {{Interspeech 2025}},
+  pages     = {3718--3722},
+  doi       = {10.21437/Interspeech.2025-794},
+  issn      = {2958-1796},
 }
 ```
 
