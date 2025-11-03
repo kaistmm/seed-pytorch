@@ -12,7 +12,7 @@ n_mels: 80
 optimizer : adamW
 lr_decay_start : 0
 
-pretrained_backbone_model : ./pretrained/nkh_ecapatdnn_139epoch.model
+pretrained_backbone_model : ./pretrained/official_ecapatdnn.model
 
 # Diffusion network parameters
 train_diffusion : False
